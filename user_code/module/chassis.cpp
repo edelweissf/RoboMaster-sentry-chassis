@@ -151,34 +151,7 @@ void Chassis::feedback_update()
 
 
 
-/**
- * @brief         输出电流
- * @param[in]
- * @retval         none
- */
-void Chassis::output()
-{
-    //赋值电流值
-    for (int i = 0; i < 4; i++)
-    {
-        chassis_motive_motor[i].current_give = (int16_t)(chassis_motive_motor[i].current_set);
-        if (chassis_behaviour_mode == CHASSIS_ZERO_FORCE)
-        {
-            chassis_motive_motor[i].current_give = 0;
-        }
-    }
 
-    //电流输出控制,通过调整宏定义控制
-    for (int i = 0; i < 4; i++)
-    {
-#if CHASSIS_MOTIVE_MOTOR_NO_CURRENT
-        chassis_motive_motor[i].current_give = 0;
-#endif
-    }
-
-    can_receive.can_cmd_chassis_motive_motor(chassis_motive_motor[0].current_give, chassis_motive_motor[1].current_give,
-                                             chassis_motive_motor[2].current_give, chassis_motive_motor[3].current_give);
-}
 
 /**
  * @brief          通过逻辑判断，赋值"chassis_behaviour_mode"成哪种模式
@@ -255,45 +228,6 @@ void Chassis::chassis_behaviour_control_set(fp32 *vx_set, fp32 *vy_set, fp32 *an
     }
     last_chassis_RC->key.v = chassis_RC->key.v;
 }
-
-/**
- * @brief          底盘无力的行为状态机下，底盘模式是raw，故而设定值会直接发送到can总线上故而将设定值都设置为0
- * @author         RM
- * @param[in]      vx_set前进的速度 设定值将直接发送到can总线上
- * @param[in]      vy_set左右的速度 设定值将直接发送到can总线上
- * @param[in]      wz_set旋转的速度 设定值将直接发送到can总线上
- * @retval         返回空
- */
-void Chassis::chassis_zero_force_control(fp32 *vx_can_set, fp32 *vy_can_set, fp32 *wz_can_set)
-{
-    if (vx_can_set == NULL || vy_can_set == NULL || wz_can_set == NULL)
-    {
-        return;
-    }
-    *vx_can_set = 0.0f;
-    *vy_can_set = 0.0f;
-    *wz_can_set = 0.0f;
-}
-
-/**
- * @brief          底盘不移动的行为状态机下，底盘模式是不跟随角度，
- * @author         RM
- * @param[in]      vx_set前进的速度,正值 前进速度， 负值 后退速度
- * @param[in]      vy_set左右的速度,正值 左移速度， 负值 右移速度
- * @param[in]      wz_set旋转的速度，旋转速度是控制底盘的底盘角速度
- * @retval         返回空
- */
-void Chassis::chassis_no_move_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
-{
-    if (vx_set == NULL || vy_set == NULL || wz_set == NULL)
-    {
-        return;
-    }
-    *vx_set = 0.0f;
-    *vy_set = 0.0f;
-    *wz_set = 0.0f;
-}
-
 
 fp32 top_wz_ctrl = TOP_WZ_ANGLE_STAND; //变速小陀螺
 uint8_t top_wz_ctrl_i = 0;
@@ -406,13 +340,9 @@ void Chassis::chassis_behaviour_mode_set()
     //自主运行下的模式判断
     if () //情况1
     {
-        chassis_behaviour_mode = CHASSIS_SPIN;
-    }
-    else if () //情况2
-    {
         chassis_behaviour_mode = CHASSIS_SPIN_FORWARD;
     }
-    else if () //情况3
+    else if () //情况2
     {
         chassis_behaviour_mode =CHASSIS_NO_MOVE ;
     }
@@ -1072,4 +1002,75 @@ void Chassis::power_ctrl()
         chassis_motive_motor[2].current_set *= current_scale;
         chassis_motive_motor[3].current_set *= current_scale;
     }
+}
+
+/**
+ * @brief         输出电流
+ * @param[in]
+ * @retval         none
+ */
+void Chassis::output()
+{
+    //赋值电流值
+    for (int i = 0; i < 4; i++)
+    {
+        chassis_motive_motor[i].current_give = (int16_t)(chassis_motive_motor[i].current_set);
+        if (chassis_behaviour_mode == CHASSIS_ZERO_FORCE)
+        {
+            chassis_motive_motor[i].current_give = 0;
+        }
+    }
+
+    //电流输出控制,通过调整宏定义控制
+    for (int i = 0; i < 4; i++)
+    {
+#if CHASSIS_MOTIVE_MOTOR_NO_CURRENT
+        chassis_motive_motor[i].current_give = 0;
+#endif
+    }
+
+    can_receive.can_cmd_chassis_motive_motor(chassis_motive_motor[0].current_give, chassis_motive_motor[1].current_give,
+                                             chassis_motive_motor[2].current_give, chassis_motive_motor[3].current_give);
+}
+
+
+
+
+
+/**
+ * @brief          底盘无力的行为状态机下，底盘模式是raw，故而设定值会直接发送到can总线上故而将设定值都设置为0
+ * @author         RM
+ * @param[in]      vx_set前进的速度 设定值将直接发送到can总线上
+ * @param[in]      vy_set左右的速度 设定值将直接发送到can总线上
+ * @param[in]      wz_set旋转的速度 设定值将直接发送到can总线上
+ * @retval         返回空
+ */
+void Chassis::chassis_zero_force_control(fp32 *vx_can_set, fp32 *vy_can_set, fp32 *wz_can_set)
+{
+    if (vx_can_set == NULL || vy_can_set == NULL || wz_can_set == NULL)
+    {
+        return;
+    }
+    *vx_can_set = 0.0f;
+    *vy_can_set = 0.0f;
+    *wz_can_set = 0.0f;
+}
+
+/**
+ * @brief          底盘不移动的行为状态机下，底盘模式是不跟随角度，
+ * @author         RM
+ * @param[in]      vx_set前进的速度,正值 前进速度， 负值 后退速度
+ * @param[in]      vy_set左右的速度,正值 左移速度， 负值 右移速度
+ * @param[in]      wz_set旋转的速度，旋转速度是控制底盘的底盘角速度
+ * @retval         返回空
+ */
+void Chassis::chassis_no_move_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
+{
+    if (vx_set == NULL || vy_set == NULL || wz_set == NULL)
+    {
+        return;
+    }
+    *vx_set = 0.0f;
+    *vy_set = 0.0f;
+    *wz_set = 0.0f;
 }
