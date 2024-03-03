@@ -6,7 +6,7 @@
 
 
 //任务开始空闲一段时间
-#define CHASSIS_TASK_INIT_TIME 30
+//#define CHASSIS_TASK_INIT_TIME 30
 
 
 
@@ -23,3 +23,6 @@ extern void chassis_task(void *pvParameters);
 
 
 #endif
+
+
+

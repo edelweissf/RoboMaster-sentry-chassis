@@ -26,6 +26,9 @@
 //任务开始空闲一段时间
 #define CHASSIS_TASK_INIT_TIME 357
 
+// 是否进行遥控器控制
+#define IF_REMOTE_CONTROL 0 
+
 //前后的遥控器通道号码
 #define CHASSIS_X_CHANNEL 3
 
@@ -87,6 +90,13 @@
 #define KEY_CHASSIS_PISA            if_key_singal_pessed(chassis_RC, last_chassis_RC, KEY_PRESSED_CHASSIS_PISA)
 #define KEY_CHASSIS_SUPER_CAP       if_key_singal_pessed(chassis_RC, last_chassis_RC, KEY_PRESSED_CHASSIS_SUPER_CAP)
 #define KEY_UI_UPDATE               if_key_singal_pessed(chassis_RC, last_chassis_RC, KEY_PRESSED_UI_UPDATE)
+
+/*----------------自动控制-------------------------*/
+//输入为上位机所给信号，目前未知
+#define AUTO_FORWARD 
+#define AUTO_BACK
+#define AUTO_LEFT
+#define AUTO_RIGHT
 
 //m3508转化成底盘速度(m/s)的比例，
 #define M3508_MOTOR_RPM_TO_VECTOR 0.000415809748903494517209f
@@ -174,7 +184,9 @@ typedef enum
 
     CHASSIS_OPEN,                        //遥控器的通道值直接转化成电机电流值发送到can总线上
 
-                                         
+    CHASSIS_SPIN_FORWARD,                // 自主模式下旋转前进
+    
+                   
 } chassis_behaviour_e;                   //行为模式
 
 typedef enum
@@ -266,8 +278,12 @@ public:
 
     void chassis_open_set_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set);
 
+    void chassis_spin_forward_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set);
+
     //功能性函数
-    void chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set);
+    void chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set);//使用遥控器控制速度
+
+    void chassis_control_vector(fp32 *vx_set, fp32 *vy_set);//自动控制速度
 
     void chassis_vector_to_mecanum_wheel_speed(fp32 wheel_speed[4]);
 

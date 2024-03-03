@@ -189,3 +189,4 @@ void Can_receive::can_cmd_super_cap_power(uint16_t set_power)
 
     HAL_CAN_AddTxMessage(&CHASSIS_CAN, &chassis_tx_message, chassis_can_send_data, &send_mail_box);
 }
+
