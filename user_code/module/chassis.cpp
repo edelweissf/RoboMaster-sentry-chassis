@@ -230,9 +230,13 @@ void Chassis::chassis_behaviour_control_set(fp32 *vx_set, fp32 *vy_set, fp32 *an
     {
         chassis_zero_force_control(vx_set, vy_set, angle_set);
     }
-    else if (chassis_behaviour_mode == CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW)
+    //else if (chassis_behaviour_mode == CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW)
+    //{
+    //    chassis_infantry_follow_gimbal_yaw_control(vx_set, vy_set, angle_set);
+    //}
+    else if (chassis_behaviour_mode ==  CHASSIS_SPIN_FORWARD)
     {
-        chassis_infantry_follow_gimbal_yaw_control(vx_set, vy_set, angle_set);
+        chassis_spin_forward_control(vx_set, vy_set, angle_set);
     }
     else if (chassis_behaviour_mode == CHASSIS_NO_FOLLOW_YAW)
     {
@@ -743,6 +747,7 @@ void Chassis::chassis_infantry_follow_gimbal_yaw_control(fp32 *vx_set, fp32 *vy_
 
 void Chassis::chassis_spin_forward_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set)
 {
+    static int spin_begin_time = 0;   // 小陀螺启动时间
     if (vx_set == NULL || vy_set == NULL || angle_set == NULL)
     {
         return;
@@ -759,7 +764,22 @@ void Chassis::chassis_spin_forward_control(fp32 *vx_set, fp32 *vy_set, fp32 *ang
         if ((fabs(*vx_set) < 0.001f) && (fabs(*vy_set) < 0.001f))
         {
             
-            
+
+            if(spin_begin_time<=SPIN_BEGIN_TIME/3)
+            {
+                top_angle = 3.0;
+                spin_begin_time++;
+            }
+            else if(spin_begin_time<=SPIN_BEGIN_TIME/2)
+            {
+                 top_angle = 6.0;
+                spin_begin_time++;
+            }
+             else if(spin_begin_time<=SPIN_BEGIN_TIME)
+            {
+                 top_angle = 9.0;
+                
+            }
             // if (top_wz_ctrl<(TOP_WZ_ANGLE_STAND-4.0) || top_wz_ctrl_i == 0)
             // {
             //     top_wz_ctrl = top_wz_ctrl + 0.01;
@@ -778,6 +798,7 @@ void Chassis::chassis_spin_forward_control(fp32 *vx_set, fp32 *vy_set, fp32 *ang
     else
     {
         top_angle = 0;
+        spin_begin_time = 0;
     }
 /****************************重新绘制UI*********************************************/	
 		
