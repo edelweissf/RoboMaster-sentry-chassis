@@ -48,3 +48,4 @@ extern void slam_init();
 bool_t slam_if_move();
 
 #endif
+

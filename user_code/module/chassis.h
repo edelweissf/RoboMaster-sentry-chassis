@@ -27,7 +27,7 @@
 #define CHASSIS_TASK_INIT_TIME 357
 
 // 是否进行遥控器控制
-#define IF_REMOTE_CONTROL 0 
+#define IF_REMOTE_CONTROL 1
 
 //前后的遥控器通道号码
 #define CHASSIS_X_CHANNEL 3
@@ -93,10 +93,10 @@
 
 /*----------------自动控制-------------------------*/
 //输入为上位机所给信号，目前未知
-#define AUTO_FORWARD 
-#define AUTO_BACK
-#define AUTO_LEFT
-#define AUTO_RIGHT
+#define AUTO_FORWARD 1
+#define AUTO_BACK 1
+#define AUTO_LEFT 1
+#define AUTO_RIGHT 1
 
 //m3508转化成底盘速度(m/s)的比例，
 #define M3508_MOTOR_RPM_TO_VECTOR 0.000415809748903494517209f
@@ -196,6 +196,8 @@ typedef enum
     CHASSIS_VECTOR_NO_FOLLOW_YAW,      //底盘不跟随云台,底盘移动速度和旋转速度由遥控器决定，无角度环控制CHASSIS_NO_FOLLOW_YAW 和 CHASSIS_NO_MOVE 选择的控制模式*/
 
     CHASSIS_VECTOR_RAW,                //底盘不跟随云台.底盘电机电流控制值是直接由遥控器通道值计算出来的，将直接发送到 CAN 总线上CHASSIS_OPEN 和 CHASSIS_ZERO_FORCE 选择的控制模式*/
+
+    CHASSIS_VECTOR_SPIN_FORWARD,       //自主模式下的旋转前进      
 
 
 } chassis_mode_e;                      //控制模式

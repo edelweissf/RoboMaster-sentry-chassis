@@ -106,13 +106,18 @@ void Chassis::init()
 void Chassis::feedback_update()
 {
     //记录上一次遥控器值
-    // last_chassis_RC->key.v = chassis_RC->key.v;
+    last_chassis_RC->key.v = chassis_RC->key.v;
     chassis_last_key_v = chassis_RC->key.v;
 
     //切入跟随云台模式
-    if ((last_chassis_mode != CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW) && (chassis_mode == CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW))
+    //if ((last_chassis_mode != CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW) && (chassis_mode == CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW))
+    //{
+    //chassis_relative_angle_set = INIT_YAW_SET;
+    //}
+    //切入小陀螺模式（调试用）
+    if ((last_chassis_mode !=  CHASSIS_VECTOR_SPIN_FORWARD) && (chassis_mode ==  CHASSIS_VECTOR_SPIN_FORWARD))
     {
-        chassis_relative_angle_set = INIT_YAW_SET;
+    chassis_relative_angle_set = INIT_YAW_SET;
     }
     //切入不跟随云台模式
     else if ((last_chassis_mode != CHASSIS_VECTOR_NO_FOLLOW_YAW) && (chassis_mode == CHASSIS_VECTOR_NO_FOLLOW_YAW))
@@ -121,9 +126,11 @@ void Chassis::feedback_update()
     }
     //切入不跟随云台模式
     else if ((last_chassis_mode != CHASSIS_VECTOR_RAW) && (chassis_mode == CHASSIS_VECTOR_RAW))
-    {
+     {
         chassis_yaw_set = 0;
     }
+    
+   
 
     //更新电机数据
     for (uint8_t i = 0; i < 4; ++i)
@@ -164,9 +171,14 @@ void Chassis::chassis_behaviour_mode_set()
     last_chassis_mode = chassis_mode;
 
     //遥控器设置模式
-    if (switch_is_up(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) //右拨杆上 底盘行为 跟随云台
+    //if (switch_is_up(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) //右拨杆上 底盘行为 跟随云台
+    //{
+      //  chassis_behaviour_mode = CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW;
+   // }CHASSIS_SPIN_FORWARD
+    if (switch_is_up(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) //右拨杆上 底盘行为 小陀螺模式
     {
-        chassis_behaviour_mode = CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW;
+        chassis_behaviour_mode = CHASSIS_SPIN_FORWARD;
+   
     }
     else if (switch_is_mid(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) //右拨杆中 底盘行为 自主运动
     {
@@ -184,9 +196,13 @@ void Chassis::chassis_behaviour_mode_set()
     {
         chassis_mode = CHASSIS_VECTOR_RAW;
     }
-    else if (chassis_behaviour_mode == CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW) //右拨杆上 底盘控制 闭环 跟随云台
+    //else if (chassis_behaviour_mode == CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW) //右拨杆上 底盘控制 闭环 跟随云台
+    //{
+       // chassis_mode = CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW;
+    //}
+    else if (chassis_behaviour_mode == CHASSIS_SPIN_FORWARD) //右拨杆上 底盘控制 闭环 小陀螺
     {
-        chassis_mode = CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW;
+        chassis_mode =  CHASSIS_VECTOR_SPIN_FORWARD;
     }
     else if (chassis_behaviour_mode == CHASSIS_NO_FOLLOW_YAW) //右拨杆中 底盘控制 闭环 自主运动
     {
@@ -280,6 +296,8 @@ void Chassis::chassis_open_set_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
 
 
 
+
+
 #else
 void Chassis::init()
 {
@@ -338,14 +356,14 @@ void Chassis::chassis_behaviour_mode_set()
     last_chassis_mode = chassis_mode;
 
     //自主运行下的模式判断
-    if () //情况1
-    {
-        chassis_behaviour_mode = CHASSIS_SPIN_FORWARD;
-    }
-    else if () //情况2
-    {
-        chassis_behaviour_mode =CHASSIS_NO_MOVE ;
-    }
+    //if () //情况1
+   // {
+   //     chassis_behaviour_mode = CHASSIS_SPIN_FORWARD;
+   // }
+   // else if () //情况2
+   // {
+   //     chassis_behaviour_mode =CHASSIS_NO_MOVE ;
+   // }
 
    
 }
@@ -668,7 +686,7 @@ void Chassis::chassis_infantry_follow_gimbal_yaw_control(fp32 *vx_set, fp32 *vy_
 
     if (top_switch == 1)
     {
-        if ((fabs(*vx_set) < 0.001) && (fabs(*vy_set) < 0.001))
+        if ((fabs(*vx_set) < 0.001f) && (fabs(*vy_set) < 0.001f))
         {
             
             
@@ -731,13 +749,14 @@ void Chassis::chassis_spin_forward_control(fp32 *vx_set, fp32 *vy_set, fp32 *ang
     }
 
     //遥控器的通道值以及键盘按键 得出 一般情况下的速度设定值
-    chassis_control_vector(vx_set, vy_set);
+    chassis_rc_to_control_vector(vx_set, vy_set);
+    //chassis_control_vector(vx_set, vy_set);
     /**************************小陀螺控制输入********************************/
     top_switch = 1;
 
     if (top_switch == 1)
     {
-        if ((fabs(*vx_set) < 0.001) && (fabs(*vy_set) < 0.001))
+        if ((fabs(*vx_set) < 0.001f) && (fabs(*vy_set) < 0.001f))
         {
             
             
@@ -751,7 +770,7 @@ void Chassis::chassis_spin_forward_control(fp32 *vx_set, fp32 *vy_set, fp32 *ang
             //     top_wz_ctrl = top_wz_ctrl - 0.01;
             //     top_wz_ctrl_i = 1;
             // }
-            top_angle = 13.0;//top_wz_ctrl;
+            top_angle = 9.0;//top_wz_ctrl;
         }
         else
             top_angle = TOP_WZ_ANGLE_MOVE;
@@ -849,7 +868,7 @@ void Chassis::chassis_control_vector(fp32 *vx_set, fp32 *vy_set)
         return;
     }
 
-    int16_t vx_channel, vy_channel;
+    //int16_t vx_channel, vy_channel;
     fp32 vx_set_channel, vy_set_channel;
     
     //自动
@@ -873,8 +892,8 @@ void Chassis::chassis_control_vector(fp32 *vx_set, fp32 *vy_set)
 
     
 
-    *vx_set = chassis_cmd_slow_set_vx.out;
-    *vy_set = chassis_cmd_slow_set_vy.out;
+    *vx_set = vx_set_channel;
+    *vy_set = vy_set_channel;
 }
 
 
@@ -965,7 +984,7 @@ void Chassis::power_ctrl()
     {
         referee.get_chassis_power_and_buffer(&chassis_power, &chassis_power_buffer);
         cap.read_cap_buff(&chassis_power_cap_buffer);
-        cap.super_number = chassis_power_cap_buffer/1400.0; //超电百分比
+//        cap.super_number = chassis_power_cap_buffer/1400.0; 
         referee.get_chassis_power_limit(&chassis_power_limit);
 			
       if(top_switch ==true&&chassis_power_buffer > 10.0f){
