@@ -7,7 +7,7 @@
 #include "Chassis.h"
 
 extern UART_HandleTypeDef huart1;
-extern DMA_HandleTypeDef hdma_usart1_rx;
+DMA_HandleTypeDef hdma_usart1_rx;
 
 uint8_t Slam_Buffer[2][SLAM_BUFFER_LEN]; // Slam数据暂存
 extern Chassis chassis;

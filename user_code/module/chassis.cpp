@@ -755,7 +755,7 @@ void Chassis::chassis_spin_forward_control(fp32 *vx_set, fp32 *vy_set, fp32 *ang
 
     //遥控器的通道值以及键盘按键 得出 一般情况下的速度设定值
     chassis_rc_to_control_vector(vx_set, vy_set);
-    //chassis_control_vector(vx_set, vy_set);
+    chassis_control_vector(vx_set, vy_set);
     /**************************小陀螺控制输入********************************/
     top_switch = 1;
 
@@ -911,10 +911,12 @@ void Chassis::chassis_control_vector(fp32 *vx_set, fp32 *vy_set)
         vy_set_channel = y.min_speed;
     }
 
-    
+     //一阶低通滤波代替斜波作为底盘速度输入
+    chassis_cmd_slow_set_vx.first_order_filter_cali(vx_set_channel);
+    chassis_cmd_slow_set_vy.first_order_filter_cali(vy_set_channel);
 
-    *vx_set = vx_set_channel;
-    *vy_set = vy_set_channel;
+    *vx_set = chassis_cmd_slow_set_vx.out;
+    *vy_set = chassis_cmd_slow_set_vy.out;
 }
 
 
