@@ -523,6 +523,14 @@ void Chassis::set_contorl()
         x.speed_set = fp32_constrain(vx_set, x.min_speed, x.max_speed);
         y.speed_set = fp32_constrain(vy_set, y.min_speed, y.max_speed);
     }
+    else if(chassis_mode= CHASSIS_VECTOR_SPIN_FORWARD)
+    {
+          //“angle_set” 是旋转速度控制
+        z.speed_set = angle_set;
+        //速度限幅
+        x.speed_set = 0;
+        y.speed_set = 0;
+    }
     
 }
 
