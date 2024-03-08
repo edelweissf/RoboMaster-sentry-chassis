@@ -345,7 +345,7 @@ void Chassis::chassis_behaviour_mode_set()
     }
     else if (IF_SPIN_OPEN) // 如果slam无底盘输入
     {
-        chassis_behaviour_mode = CHASSIS_SPIN;
+        chassis_behaviour_mode = CHASSIS_SPIM;
     }
 }
 
@@ -407,7 +407,7 @@ void Chassis::chassis_behaviour_control_set(fp32 *vx_set, fp32 *vy_set, fp32 *an
         return;
     }
 
-    if (chassis_behaviour_mode == CHASSIS_SPIN)
+    if (chassis_behaviour_mode == CHASSIS_SPIM)
     {
         chassis_spin_control(vx_set, vy_set, angle_set);
     }
