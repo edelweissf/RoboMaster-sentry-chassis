@@ -345,7 +345,7 @@ void Chassis::chassis_behaviour_mode_set()
     }
     else if (IF_SPIN_OPEN) // 如果slam无底盘输入
     {
-        chassis_behaviour_mode = CHASSIS_SPIM;
+        chassis_behaviour_mode = CHASSIS_SPIN;
     }
 }
 
@@ -407,7 +407,7 @@ void Chassis::chassis_behaviour_control_set(fp32 *vx_set, fp32 *vy_set, fp32 *an
         return;
     }
 
-    if (chassis_behaviour_mode == CHASSIS_SPIM)
+    if (chassis_behaviour_mode == CHASSIS_SPIN)
     {
         chassis_spin_control(vx_set, vy_set, angle_set);
     }
@@ -494,8 +494,8 @@ void Chassis::set_contorl()
         // “angle_set” 是旋转速度控制
         z.speed_set = angle_set;
         // 速度限幅
-        x.speed_set = 0;
-        y.speed_set = 0;
+        x.speed_set = vx_set;
+        y.speed_set = vy_set;
     }
 }
 
@@ -701,9 +701,12 @@ void Chassis::chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set)
         return;
     }
 
+#if IF_REMOTE_CONTROL
     // 遥控器的通道值以及键盘按键 得出 一般情况下的速度设定值
     chassis_rc_to_control_vector(vx_set, vy_set);
     chassis_control_vector(vx_set, vy_set);
+#endif
+
     /**************************小陀螺控制输入********************************/
     if (IF_SPIN_OPEN)
     {
@@ -740,7 +743,9 @@ void Chassis::chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set)
         ui.start();
     }
 
-    *angle_set = top_angle;
+    *vx_set = 0;
+    *vy_set = 0;
+    *angle_set = top_angle; // 对小陀螺的最高转速做限定
 }
 
 /**
