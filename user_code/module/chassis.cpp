@@ -287,6 +287,9 @@ void Chassis::chassis_open_set_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
 #else
 void Chassis::init()
 {
+    chassis_RC = remote_control.get_remote_control_point();
+    last_chassis_RC = remote_control.get_last_remote_control_point();
+
     // 设置初试状态机
     chassis_behaviour_mode = CHASSIS_ZERO_FORCE;
     last_chassis_behaviour_mode = chassis_behaviour_mode;
@@ -343,9 +346,13 @@ void Chassis::chassis_behaviour_mode_set()
     {
         chassis_behaviour_mode = CHASSIS_FOLLOW_SLAM;
     }
-    else if (IF_SPIN_OPEN) // 如果slam无底盘输入
+    else if (IF_SPIN_OPEN && switch_is_up(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) // 如果slam无底盘输入且遥控器右拨杆没上拉
     {
         chassis_behaviour_mode = CHASSIS_SPIN;
+    }
+    else
+    {
+        chassis_behaviour_mode = CHASSIS_ZERO_FORCE;
     }
 }
 
