@@ -909,10 +909,10 @@ void Chassis::chassis_vector_to_omni_wheel_speed(fp32 wheel_speed[4])
     wheel_speed[2] = -x.speed_set - y.speed_set + (LENGTH_A + LENGTH_B) * wheel_rpm_ratio * z.speed_set; // 左后轮，右后
     wheel_speed[3] = -x.speed_set + y.speed_set + (LENGTH_A + LENGTH_B) * wheel_rpm_ratio * z.speed_set; // 左前轮，左后
 #else
-    //  wheel_speed[0] = -x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
-    //  wheel_speed[1] = x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
-    //  wheel_speed[2] = x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
-    //  wheel_speed[3] = -x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+    wheel_speed[0] = -x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+    wheel_speed[1] = x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+    wheel_speed[2] = x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+    wheel_speed[3] = -x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
 #endif
 }
 
