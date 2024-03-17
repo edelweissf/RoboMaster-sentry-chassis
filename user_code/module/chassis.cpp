@@ -519,7 +519,7 @@ void Chassis::solve()
 
     uint8_t i = 0;
 
-    // 麦轮运动分解
+    // 全向轮运动分解
     chassis_vector_to_omni_wheel_speed(wheel_speed);
 
     if (chassis_mode == CHASSIS_VECTOR_RAW)
@@ -898,11 +898,7 @@ void Chassis::chassis_vector_to_omni_wheel_speed(fp32 wheel_speed[4])
     //  wheel_speed[1] = x.speed_set - y.speed_set + (CHASSIS_WZ_SET_SCALE - 1.0f) * MOTOR_DISTANCE_TO_CENTER * z.speed_set;
     //  wheel_speed[2] = x.speed_set + y.speed_set + (-CHASSIS_WZ_SET_SCALE - 1.0f) * MOTOR_DISTANCE_TO_CENTER * z.speed_set;
     //  wheel_speed[3] = -x.speed_set + y.speed_set + (-CHASSIS_WZ_SET_SCALE - 1.0f) * MOTOR_DISTANCE_TO_CENTER * z.speed_set;
-
-    //  wheel_speed[0] = -x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
-    //  wheel_speed[1] = x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
-    //  wheel_speed[2] = x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
-    //  wheel_speed[3] = -x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+#if IF_SEMTRY_SOLVE
     float WHEEL_PERIMETER = 152.5;
     float CHASSIS_DECELE_RATIO = 19;
     float LENGTH_A = 293.725;
@@ -912,6 +908,12 @@ void Chassis::chassis_vector_to_omni_wheel_speed(fp32 wheel_speed[4])
     wheel_speed[1] = x.speed_set - y.speed_set + (LENGTH_A + LENGTH_B) * wheel_rpm_ratio * z.speed_set;  // 右后轮，右前
     wheel_speed[2] = -x.speed_set - y.speed_set + (LENGTH_A + LENGTH_B) * wheel_rpm_ratio * z.speed_set; // 左后轮，右后
     wheel_speed[3] = -x.speed_set + y.speed_set + (LENGTH_A + LENGTH_B) * wheel_rpm_ratio * z.speed_set; // 左前轮，左后
+#else
+    //  wheel_speed[0] = -x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+    //  wheel_speed[1] = x.speed_set - y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+    //  wheel_speed[2] = x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+    //  wheel_speed[3] = -x.speed_set + y.speed_set - MOTOR_DISTANCE_TO_CENTER * z.speed_set;
+#endif
 }
 
 fp32 move_top_xyz_parm[3] = {1.0, 1.0, 1.3};

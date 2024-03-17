@@ -104,6 +104,9 @@
 // 是否开启小陀螺
 #define IF_SPIN_OPEN 1
 
+// 解算方式是否为全向轮解算，如果为哨兵(全向轮)则置1，(麦轮)置0
+#define IF_SEMTRY_SOLVE 1
+
 // m3508转化成底盘速度(m/s)的比例，
 #define M3508_MOTOR_RPM_TO_VECTOR 0.000415809748903494517209f
 #define CHASSIS_MOTOR_RPM_TO_VECTOR_SEN M3508_MOTOR_RPM_TO_VECTOR
