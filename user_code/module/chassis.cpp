@@ -479,6 +479,8 @@ void Chassis::chassis_infantry_follow_gimbal_yaw_control(fp32 *vx_set, fp32 *vy_
 void Chassis::chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set)
 {
     static int spin_begin_time = 0; // 小陀螺启动时间
+    static int spin_change_time = 0;
+    static float spin_change = 0; // 小陀螺变速变量
     if (vx_set == NULL || vy_set == NULL || angle_set == NULL)
     {
         return;
@@ -493,26 +495,29 @@ void Chassis::chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set)
     /**************************小陀螺控制输入********************************/
     if (IF_SPIN_OPEN)
     {
+        spin_change = abs(sin(double(spin_change_time / SPIN_CHANGE_V))); // 将时间转化为变速变量
+
         if ((fabs(*vx_set) < 0.001f) && (fabs(*vy_set) < 0.001f))
         {
             if (spin_begin_time <= SPIN_BEGIN_TIME / 3)
             {
-                top_angle = 2.0 / SPIN_PROPORTION;
+                top_angle = 5.0 / SPIN_PROPORTION * spin_change;
                 spin_begin_time++;
             }
             else if (spin_begin_time <= SPIN_BEGIN_TIME / 2)
             {
-                top_angle = 5.0 / SPIN_PROPORTION;
+                top_angle = 10.0 / SPIN_PROPORTION * spin_change;
                 spin_begin_time++;
             }
             else if (spin_begin_time <= SPIN_BEGIN_TIME)
             {
-                top_angle = 10.0 / SPIN_PROPORTION;
+                top_angle = 15.0 / SPIN_PROPORTION * spin_change;
             }
-            top_angle = 10.0 / SPIN_PROPORTION; // top_wz_ctrl;
+            top_angle = 15.0 / SPIN_PROPORTION * spin_change; // top_wz_ctrl;
         }
         else
             top_angle = TOP_WZ_ANGLE_MOVE;
+        spin_change_time++;
     }
     else
     {

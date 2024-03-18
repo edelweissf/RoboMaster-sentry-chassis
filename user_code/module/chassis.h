@@ -145,6 +145,7 @@
 #define CHASSIS_OPEN_RC_SCALE 10 // in CHASSIS_OPEN mode, multiply the value. 在chassis_open 模型下，遥控器乘以该比例发送到can上
 
 #define SPIN_BEGIN_TIME 1000 // 小陀螺启动时间
+#define SPIN_CHANGE_V 1000   // 小陀螺变速比例
 
 #define SPIN_PROPORTION 10000000 // 对小陀螺旋转进行等比缩放
 
