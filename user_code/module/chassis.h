@@ -279,7 +279,7 @@ public:
 
     void chassis_no_follow_yaw_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set);
 
-    void chassis_open_set_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set);
+    void chassis_slam_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set);
 
     void chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set);
 

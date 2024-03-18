@@ -44,7 +44,7 @@ extern bool_t super_cap_switch;
  * @param[in]      数据
  * @retval         none
  */
-void Chassis::chassis_open_set_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
+void Chassis::chassis_slam_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
 {
     if (vx_set == NULL || vy_set == NULL || wz_set == NULL)
     {
@@ -194,7 +194,7 @@ void Chassis::chassis_behaviour_control_set(fp32 *vx_set, fp32 *vy_set, fp32 *an
     }
     else if (chassis_behaviour_mode == CHASSIS_FOLLOW_SLAM)
     {
-        chassis_open_set_control(vx_set, vy_set, angle_set);
+        chassis_slam_control(vx_set, vy_set, angle_set);
     }
 }
 
