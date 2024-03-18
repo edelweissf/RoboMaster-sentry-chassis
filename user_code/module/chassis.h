@@ -189,7 +189,7 @@ typedef enum
 
     CHASSIS_FOLLOW_SLAM, // 底盘跟随slam模式
 
-    CHASSIS_SPIN, // 自主模式下旋转前进
+    CHASSIS_SPIN, // 自主模式下旋转
 
 } chassis_behaviour_e; // 行为模式
 

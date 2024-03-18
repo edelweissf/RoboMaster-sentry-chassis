@@ -345,10 +345,12 @@ void Chassis::chassis_behaviour_mode_set()
     if (IF_SLAM_OPEN) // 如果slam有信号输入
     {
         chassis_behaviour_mode = CHASSIS_FOLLOW_SLAM;
+        chassis_mode = CHASSIS_VECTOR_SLAM;
     }
     else if (switch_is_up(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) // 如果slam无底盘输入且遥控器右拨杆没上拉
     {
         chassis_behaviour_mode = CHASSIS_SPIN;
+        chassis_mode = CHASSIS_VECTOR_SPIN;
     }
     else
     {
