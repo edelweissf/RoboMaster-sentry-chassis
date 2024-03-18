@@ -26,9 +26,6 @@
 // 任务开始空闲一段时间
 #define CHASSIS_TASK_INIT_TIME 357
 
-// 是否进行遥控器控制
-#define IF_REMOTE_CONTROL 0
-
 // 前后的遥控器通道号码
 #define CHASSIS_X_CHANNEL 3
 
