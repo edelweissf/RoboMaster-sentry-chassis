@@ -346,7 +346,7 @@ void Chassis::chassis_behaviour_mode_set()
     {
         chassis_behaviour_mode = CHASSIS_FOLLOW_SLAM;
     }
-    else if (IF_SPIN_OPEN && switch_is_up(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) // 如果slam无底盘输入且遥控器右拨杆没上拉
+    else if (switch_is_up(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) // 如果slam无底盘输入且遥控器右拨杆没上拉
     {
         chassis_behaviour_mode = CHASSIS_SPIN;
     }
