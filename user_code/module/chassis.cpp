@@ -723,19 +723,19 @@ void Chassis::chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set)
         {
             if (spin_begin_time <= SPIN_BEGIN_TIME / 3)
             {
-                top_angle = 2 / SPIN_PROPORTION;
+                top_angle = 2.0 / SPIN_PROPORTION;
                 spin_begin_time++;
             }
             else if (spin_begin_time <= SPIN_BEGIN_TIME / 2)
             {
-                top_angle = 5 / SPIN_PROPORTION;
+                top_angle = 5.0 / SPIN_PROPORTION;
                 spin_begin_time++;
             }
             else if (spin_begin_time <= SPIN_BEGIN_TIME)
             {
-                top_angle = 10 / SPIN_PROPORTION;
+                top_angle = 10.0 / SPIN_PROPORTION;
             }
-            top_angle = 10 / SPIN_PROPORTION; // top_wz_ctrl;
+            top_angle = 10.0 / SPIN_PROPORTION; // top_wz_ctrl;
         }
         else
             top_angle = TOP_WZ_ANGLE_MOVE;

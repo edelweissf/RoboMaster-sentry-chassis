@@ -149,6 +149,8 @@
 
 #define SPIN_BEGIN_TIME 1000 // 小陀螺启动时间
 
+#define SPIN_PROPORTION 10000000 //对小陀螺旋转进行等比缩放
+
 // chassis motor speed PID
 // 底盘电机速度环PID
 #define MOTIVE_MOTOR_SPEED_PID_KP 6000.0f
