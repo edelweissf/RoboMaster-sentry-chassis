@@ -271,8 +271,6 @@ public:
 
     void chassis_zero_force_control(fp32 *vx_can_set, fp32 *vy_can_set, fp32 *wz_can_set);
 
-    void chassis_no_move_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set);
-
     void chassis_infantry_follow_gimbal_yaw_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set);
 
     void chassis_engineer_follow_chassis_yaw_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set);

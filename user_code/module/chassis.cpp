@@ -814,22 +814,3 @@ void Chassis::chassis_zero_force_control(fp32 *vx_can_set, fp32 *vy_can_set, fp3
     *vy_can_set = 0.0f;
     *wz_can_set = 0.0f;
 }
-
-/**
- * @brief          底盘不移动的行为状态机下，底盘模式是不跟随角度，
- * @author         RM
- * @param[in]      vx_set前进的速度,正值 前进速度， 负值 后退速度
- * @param[in]      vy_set左右的速度,正值 左移速度， 负值 右移速度
- * @param[in]      wz_set旋转的速度，旋转速度是控制底盘的底盘角速度
- * @retval         返回空
- */
-void Chassis::chassis_no_move_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
-{
-    if (vx_set == NULL || vy_set == NULL || wz_set == NULL)
-    {
-        return;
-    }
-    *vx_set = 0.0f;
-    *vy_set = 0.0f;
-    *wz_set = 0.0f;
-}
