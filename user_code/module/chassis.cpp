@@ -262,6 +262,7 @@ void Chassis::chassis_no_follow_yaw_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz
     chassis_rc_to_control_vector(vx_set, vy_set);
     *wz_set = -CHASSIS_WZ_RC_SEN * chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL];
 }
+#else
 
 /**
  * @brief          底盘开环的行为状态机下，底盘模式是raw原生状态，故而设定值会直接发送到can总线上
@@ -284,7 +285,6 @@ void Chassis::chassis_open_set_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
     return;
 }
 
-#else
 void Chassis::init()
 {
     chassis_RC = remote_control.get_remote_control_point();
@@ -342,7 +342,7 @@ void Chassis::init()
 void Chassis::chassis_behaviour_mode_set()
 {
     // 自主运行下的模式判断
-    if (IF_SLAM_OPEN) // 如果slam有信号输入
+    if (IF_SLAM_OPEN && switch_is_down(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) // 如果slam有信号输入
     {
         chassis_behaviour_mode = CHASSIS_FOLLOW_SLAM;
         chassis_mode = CHASSIS_VECTOR_SLAM;
@@ -420,6 +420,10 @@ void Chassis::chassis_behaviour_control_set(fp32 *vx_set, fp32 *vy_set, fp32 *an
     {
         chassis_spin_control(vx_set, vy_set, angle_set);
     }
+    else if (chassis_behaviour_mode == CHASSIS_FOLLOW_SLAM)
+    {
+        chassis_open_set_control(vx_set, vy_set, angle_set);
+    }
 }
 
 #endif
@@ -493,10 +497,10 @@ void Chassis::set_contorl()
     }
     else if (chassis_mode == CHASSIS_VECTOR_SLAM)
     {
-        z.speed_set = 0;
+        z.speed_set = angle_set;
         // TODO:数据由slam传输
-        // x.speed_set = ;
-        // y.speed_set = ;
+        x.speed_set = fp32_constrain(vx_set, x.min_speed, x.max_speed);
+        y.speed_set = fp32_constrain(vy_set, y.min_speed, y.max_speed);
     }
     else if (chassis_mode == CHASSIS_VECTOR_SPIN)
     {
