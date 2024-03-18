@@ -503,8 +503,8 @@ void Chassis::set_contorl()
         // “angle_set” 是旋转速度控制
         z.speed_set = angle_set;
         // 速度限幅
-        x.speed_set = vx_set;
-        y.speed_set = vy_set;
+        x.speed_set = fp32_constrain(vx_set, x.min_speed, x.max_speed);
+        y.speed_set = fp32_constrain(vy_set, y.min_speed, y.max_speed);
     }
 }
 
@@ -723,19 +723,19 @@ void Chassis::chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set)
         {
             if (spin_begin_time <= SPIN_BEGIN_TIME / 3)
             {
-                top_angle = 3.0;
+                top_angle = 2 / SPIN_PROPORTION;
                 spin_begin_time++;
             }
             else if (spin_begin_time <= SPIN_BEGIN_TIME / 2)
             {
-                top_angle = 6.0;
+                top_angle = 5 / SPIN_PROPORTION;
                 spin_begin_time++;
             }
             else if (spin_begin_time <= SPIN_BEGIN_TIME)
             {
-                top_angle = 9.0;
+                top_angle = 10 / SPIN_PROPORTION;
             }
-            top_angle = 9.0; // top_wz_ctrl;
+            top_angle = 10 / SPIN_PROPORTION; // top_wz_ctrl;
         }
         else
             top_angle = TOP_WZ_ANGLE_MOVE;
