@@ -41,11 +41,10 @@ extern uint8_t Slam_Buffer[2][SLAM_BUFFER_LEN]; // Slam数据暂存
 // 命令码ID,用来判断接收的是什么数据
 void slam_read_data(uint8_t *ReadFormUart1);
 
-void slam_move(float *vx, float *vy);
+void slam_move(float *vx, float *vy, float *vz);
 
 extern void slam_init();
 
 bool_t slam_if_move();
 
 #endif
-

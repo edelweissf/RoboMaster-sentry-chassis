@@ -2,6 +2,7 @@
 #include "Communicate.h"
 #include "cmsis_os.h"
 #include "arm_math.h"
+#include "Slam_control.h"
 #include "Ui.h"
 #ifdef __cplusplus // 告诉编译器，这部分代码按C语言的格式进行编译，而不是C++的
 extern "C"
@@ -51,9 +52,10 @@ void Chassis::chassis_slam_control(fp32 *vx_set, fp32 *vy_set, fp32 *wz_set)
         return;
     }
 
-    *vx_set = chassis_RC->rc.ch[CHASSIS_X_CHANNEL] * CHASSIS_OPEN_RC_SCALE;
-    *vy_set = -chassis_RC->rc.ch[CHASSIS_Y_CHANNEL] * CHASSIS_OPEN_RC_SCALE;
-    *wz_set = -chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL] * CHASSIS_OPEN_RC_SCALE;
+    slam_move(vx_set, vy_set, wz_set);
+    // *vx_set = chassis_RC->rc.ch[CHASSIS_X_CHANNEL] * CHASSIS_OPEN_RC_SCALE;
+    // *vy_set = -chassis_RC->rc.ch[CHASSIS_Y_CHANNEL] * CHASSIS_OPEN_RC_SCALE;
+    // *wz_set = -chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL] * CHASSIS_OPEN_RC_SCALE;
     return;
 }
 
@@ -114,7 +116,8 @@ void Chassis::init()
 void Chassis::chassis_behaviour_mode_set()
 {
     // 自主运行下的模式判断
-    if (IF_SLAM_OPEN && switch_is_down(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) // 如果slam有信号输入
+    // zxn(暂时调试用，向下时候才判断slam)
+    if (slam_if_move() && switch_is_down(chassis_RC->rc.s[CHASSIS_MODE_CHANNEL])) // 如果slam有信号输入
     {
         chassis_behaviour_mode = CHASSIS_FOLLOW_SLAM;
         chassis_mode = CHASSIS_VECTOR_SLAM;

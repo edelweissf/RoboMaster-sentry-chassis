@@ -65,10 +65,11 @@ void slam_read_data(uint8_t *ReadFormUart)
     }
 }
 
-void slam_move(float *vx, float *vy)
+void slam_move(float *vx, float *vy, float *vz)
 {
     *vx = SlamRecvData.x_speed;
     *vy = SlamRecvData.y_speed;
+    *vz = 0;
 }
 
 bool_t slam_if_move()
