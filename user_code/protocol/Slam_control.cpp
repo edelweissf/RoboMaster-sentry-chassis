@@ -5,7 +5,10 @@
 #include "tim.h"
 #include "CRC8_CRC16.h"
 #include "Chassis.h"
-
+extern "C"
+{
+	#include "bsp_buzzer.h"
+}
 extern UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 
@@ -53,10 +56,15 @@ void slam_read_data(uint8_t *ReadFormUart)
             memcpy(&SlamRecvData, ReadFormUart, SLAM_READ_LEN_PACKED);
 
             if (SlamRecvData.isMoving == 1)
+            {
+				buzzer_on(5, 10000);
                 if_move = TRUE; // 移动
+            }
             else
+            {
+                buzzer_off();
                 if_move = FALSE; // 不移动
-
+            }
             // //帧计算
             // Vision_Time_Test[NOW] = xTaskGetTickCount();
             // Vision_Ping = Vision_Time_Test[NOW] - Vision_Time_Test[LAST];//计算时间间隔
