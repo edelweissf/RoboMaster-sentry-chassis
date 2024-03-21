@@ -109,21 +109,26 @@ void Chassis::init()
  */
 void Chassis::chassis_behaviour_mode_set()
 {
+    // TODO:比赛的时候要改
     // 自主运行下的模式判断
     // zxn(暂时调试用，向下时候才判断slam)
-    if (slam_if_move() && switch_is_down(chassis_RC->rc.s[CHASSIS_RIGHT_CHANNEL])) // 如果slam有信号输入
+    if (switch_is_down(chassis_RC->rc.s[CHASSIS_RIGHT_CHANNEL])) // 右杆拨下，无力模式
+    {
+        chassis_mode = CHASSIS_VECTOR_ZERO_FORCE;
+    }
+    else if (slam_if_move() && switch_is_mid(chassis_RC->rc.s[CHASSIS_RIGHT_CHANNEL]) && switch_is_up(chassis_RC->rc.s[CHASSIS_LEFT_CHANNEL])) // 右杆拨中，左杆拨上，slam控制
     {
         chassis_mode = CHASSIS_VECTOR_SLAM;
     }
-    else if (switch_is_up(chassis_RC->rc.s[CHASSIS_RIGHT_CHANNEL])) // 如果slam无底盘输入且遥控器右拨杆没上拉
+    else if (switch_is_up(chassis_RC->rc.s[CHASSIS_RIGHT_CHANNEL])) // 右杆拨上，小陀螺控制
     {
         chassis_mode = CHASSIS_VECTOR_SPIN;
     }
-    else if (switch_is_up(chassis_RC->rc.s[CHASSIS_LEFT_CHANNEL]))
+    else if (switch_is_mid(chassis_RC->rc.s[CHASSIS_RIGHT_CHANNEL])) // 右杆拨中，遥控器控制
     {
         chassis_mode = CHASSIS_VECTOR_REMOTE;
     }
-    else
+    else // 其余情况，皆为无力
     {
         chassis_mode = CHASSIS_VECTOR_ZERO_FORCE;
     }
