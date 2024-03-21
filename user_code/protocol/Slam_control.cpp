@@ -7,7 +7,7 @@
 #include "Chassis.h"
 extern "C"
 {
-	#include "bsp_buzzer.h"
+#include "bsp_buzzer.h"
 }
 extern UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
@@ -57,7 +57,7 @@ void slam_read_data(uint8_t *ReadFormUart)
 
             if (SlamRecvData.isMoving == 1)
             {
-				buzzer_on(5, 10000);
+                buzzer_on(5, 10000);
                 if_move = TRUE; // 移动
             }
             else
