@@ -39,7 +39,8 @@
 #define INIT_YAW_SET 0.0f
 
 // 选择底盘状态 开关通道号
-#define CHASSIS_MODE_CHANNEL 1
+#define CHASSIS_LEFT_CHANNEL 0  // 左拨杆
+#define CHASSIS_RIGHT_CHANNEL 1 // 右拨杆
 
 // 遥控器前进摇杆（max 660）转化成车体前进速度（m/s）的比例
 #define CHASSIS_VX_RC_SEN 0.005f
@@ -118,11 +119,6 @@
 // 底盘运动过程最大旋转速度
 #define NORMAL_MAX_CHASSIS_SPEED_Z 14.0f
 
-// 原地旋转小陀螺下Z轴转速
-#define TOP_WZ_ANGLE_STAND 8.0f
-// 移动状态下小陀螺转速
-#define TOP_WZ_ANGLE_MOVE 2.5f
-
 #define CHASSIS_WZ_SET_SCALE 0.1f
 
 // 摇摆原地不动摇摆最大角度(rad)
@@ -177,29 +173,9 @@
 
 typedef enum
 {
-    CHASSIS_ZERO_FORCE, // 底盘表现为无力,底盘电机电流控制值为0,应用于遥控器掉线或者需要底盘上电时方便推动的场合
+    CHASSIS_VECTOR_ZERO_FORCE, // 无力模式
 
-    CHASSIS_NO_MOVE, // 底盘表现为不动，但推动底盘存在抵抗力,底盘电机速度控制值为0,应用于遥控器开关处下位，需要底盘停止运动的场合
-
-    CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW, // 正常底盘跟随云台,底盘移动速度由遥控器和键盘按键一起决定，同时会控制底盘跟随云台，从而计算旋转速度,应用于遥控器开关处于上位
-
-    CHASSIS_NO_FOLLOW_YAW, // 底盘移动速度和旋转速度均由遥控器决定,应用于只需要底盘控制的场合
-
-    CHASSIS_OPEN, // 遥控器的通道值直接转化成电机电流值发送到can总线上
-
-    CHASSIS_FOLLOW_SLAM, // 底盘跟随slam模式
-
-    CHASSIS_SPIN, // 自主模式下旋转
-
-} chassis_behaviour_e; // 行为模式
-
-typedef enum
-{
-    CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW, // 底盘跟随云台,底盘移动速度由遥控器和键盘决定,旋转速度由云台角度差计算出CHASSIS_INFANTRY_FOLLOW_GIMBAL_YAW 选择的控制模式
-
-    CHASSIS_VECTOR_NO_FOLLOW_YAW, // 底盘不跟随云台,底盘移动速度和旋转速度由遥控器决定，无角度环控制CHASSIS_NO_FOLLOW_YAW 和 CHASSIS_NO_MOVE 选择的控制模式*/
-
-    CHASSIS_VECTOR_RAW, // 底盘不跟随云台.底盘电机电流控制值是直接由遥控器通道值计算出来的，将直接发送到 CAN 总线上CHASSIS_OPEN 和 CHASSIS_ZERO_FORCE 选择的控制模式*/
+    CHASSIS_VECTOR_REMOTE, // 遥控器控制
 
     CHASSIS_VECTOR_SLAM, // 跟随slam模式
 
@@ -224,9 +200,6 @@ public:
 
     uint16_t chassis_last_key_v; // 遥控器上次按键
 
-    chassis_behaviour_e chassis_behaviour_mode;      // 底盘行为状态机
-    chassis_behaviour_e last_chassis_behaviour_mode; // 底盘上次行为状态机
-
     chassis_mode_e chassis_mode;      // 底盘控制状态机
     chassis_mode_e last_chassis_mode; // 底盘上次控制状态机
 
@@ -234,6 +207,7 @@ public:
 
     First_order_filter chassis_cmd_slow_set_vx; // 使用一阶低通滤波减缓设定值
     First_order_filter chassis_cmd_slow_set_vy; // 使用一阶低通滤波减缓设定值
+    First_order_filter chassis_cmd_slow_set_vz; // 使用一阶低通滤波减缓设定值
 
     Pid chassis_wz_angle_pid; // 底盘角度pid
 
@@ -283,13 +257,11 @@ public:
     void chassis_spin_control(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set);
 
     // 功能性函数
-    void chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set); // 使用遥控器控制速度
+    void chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set, fp32 *angle_set); // 使用遥控器控制速度
 
     void chassis_control_vector(fp32 *vx_set, fp32 *vy_set); // 自动控制速度
 
     void chassis_vector_to_omni_wheel_speed(fp32 wheel_speed[4]);
-
-    fp32 motor_ecd_to_angle_change(uint16_t ecd, uint16_t offset_ecd);
 };
 
 extern Chassis chassis;
