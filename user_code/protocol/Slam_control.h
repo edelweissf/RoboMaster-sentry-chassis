@@ -11,15 +11,15 @@
 #define LAST 1
 
 #define SLAM_LEN_HEADER 1      // 帧头长
-#define SLAM_LEN_DATA 7        // 数据段长度,可自定义
+#define SLAM_LEN_DATA 9        // 数据段长度,可自定义
 #define SLAM_SEND_LEN_PACKED 0 // 暂时没有发送，备用
-#define SLAM_READ_LEN_PACKED 9 // 接受数据包长度
+#define SLAM_READ_LEN_PACKED 11 // 接受数据包长度
 
 #define SLAM_BEGIN (0xA8) // 可更改
 #define SLAM_END (0xFF)   // 帧尾
 
 // STM32接收,直接将串口接收到的数据拷贝进结构体 18帧
-typedef __packed struct // 9 Byte
+typedef __packed struct // 11 Byte
 {
     /* 头 */
     uint8_t BEGIN; // 帧头起始位,暂定0xA8

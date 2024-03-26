@@ -7,6 +7,7 @@
 #ifdef __cplusplus
 extern "C"
 {
+#include "bsp_buzzer.h"
 #endif
 
 #include "CRC8_CRC16.h"
@@ -23,6 +24,7 @@ extern "C"
 #include "Can_receive.h"
 #include "Referee.h"
 #include "Ui.h"
+#include "Slam_control.h"
 
 Remote_control remote_control;
 extern Can_receive can_receive;
@@ -46,6 +48,8 @@ void Communicate::init()
     referee.init();
 
     ui.init(&referee.Judge_Self_ID, &referee.Judge_SelfClient_ID);
+	
+		slam_init();
 }
 
 void Communicate::run()
@@ -178,9 +182,9 @@ extern "C"
                 huart1.hdmarx->Instance->CR |= DMA_SxCR_CT;
                 __HAL_DMA_ENABLE(huart1.hdmarx);
 
-                slam_read_data(Slam_Buffer[0]); // 读取视觉数据
+                slam_read_data(Slam_Buffer[0]); // 读取数据
                 memset(Slam_Buffer[0], 0, 200);
-                detect_hook(VISION_TOE);
+                //detect_hook(VISION_TOE);
             }
             else
             {
@@ -190,9 +194,9 @@ extern "C"
                 huart1.hdmarx->Instance->CR &= ~(DMA_SxCR_CT);
                 __HAL_DMA_ENABLE(huart1.hdmarx);
 
-                slam_read_data(Slam_Buffer[1]); // 读取视觉数据
+                slam_read_data(Slam_Buffer[1]); // 读取数据
                 memset(Slam_Buffer[1], 0, 200); // 对象   内容  长度
-                detect_hook(VISION_TOE);
+                //detect_hook(VISION_TOE);
             }
         }
     }

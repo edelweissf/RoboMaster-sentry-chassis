@@ -10,7 +10,7 @@ extern "C"
 #include "bsp_buzzer.h"
 }
 extern UART_HandleTypeDef huart1;
-DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart1_rx;
 
 uint8_t Slam_Buffer[2][SLAM_BUFFER_LEN]; // Slam数据暂存
 extern Chassis chassis;
@@ -27,7 +27,6 @@ void slam_move(float *vx, float *vy);
 void slam_init()
 {
     usart1_init(Slam_Buffer[0], Slam_Buffer[1], SLAM_BUFFER_LEN);
-
     SlamRecvData.isMoving = 0; // 是否移动  0不移动  1移动
     SlamRecvData.x_speed = 0;  // x方向的速度
     SlamRecvData.y_speed = 0;  // y 方向的速度
@@ -45,24 +44,23 @@ uint8_t Slam_Ping = 0;           // 发送时间间隔
 void slam_read_data(uint8_t *ReadFormUart)
 {
 
-    // 判断帧头数据是否为0xA5
+    // 判断帧头数据是否为0xA8
     if (ReadFormUart[0] == SLAM_BEGIN)
     {
+			  buzzer_on(5, 10000);
         // 判断帧头数据是否为0xff
-        if (ReadFormUart[8] == SLAM_END)
+        if (ReadFormUart[10] == SLAM_END)
         {
-
             // 接收数据拷贝
             memcpy(&SlamRecvData, ReadFormUart, SLAM_READ_LEN_PACKED);
 
             if (SlamRecvData.isMoving == 1)
             {
-                buzzer_on(5, 10000);
                 if_move = TRUE; // 移动
             }
             else
             {
-                buzzer_off();
+                //buzzer_off();
                 if_move = FALSE; // 不移动
             }
             // //帧计算
