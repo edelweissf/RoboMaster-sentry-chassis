@@ -28,7 +28,7 @@ uint8_t key_pressed_num_ctrl = 0;
 
 // 小陀螺控制数据
 fp32 top_angle = 0.0f;
-bool_t top_switch = 0;
+bool_t top_switch = 1;
 
 // 45度角对敌数据
 fp32 pisa_angle = 0.0f; // 保留45度对敌前的云台相对底盘角度
@@ -217,12 +217,37 @@ void Chassis::set_contorl()
     // 获取三个控制设置值
     chassis_behaviour_control_set(&vx_set, &vy_set, &angle_set);
 
-    // “angle_set” 是旋转速度控制
-    z.speed_set = angle_set;
+    // 跟随云台小陀螺模式
+    if (chassis_mode == CHASSIS_VECTOR_SPIN)
+    {
+        fp32 sin_yaw = 0.0f, cos_yaw = 0.0f;
+        // 旋转控制底盘速度方向，保证前进方向是云台方向，有利于运动平稳
+        sin_yaw = sin(-chassis_relative_angle);
+        cos_yaw = cos(-chassis_relative_angle);
 
-    // 速度限幅
-    x.speed_set = fp32_constrain(vx_set, x.min_speed, x.max_speed);
-    y.speed_set = fp32_constrain(vy_set, y.min_speed, y.max_speed);
+        x.speed_set = cos_yaw * vx_set + sin_yaw * vy_set;
+        y.speed_set = -sin_yaw * vx_set + cos_yaw * vy_set;
+
+        // 设置控制相对云台角度
+        chassis_relative_angle_set = rad_format(angle_set);
+
+        // 计算旋转PID角速度 如果是小陀螺,固定转速 如果是45度角对敌,选择固定角度
+        if (top_switch == TRUE)
+        {
+            z.speed_set = angle_set;
+        }
+        else
+        {
+            chassis_wz_angle_pid.data.ref = &chassis_relative_angle;
+            chassis_wz_angle_pid.data.set = &chassis_relative_angle_set;
+            z.speed_set = -chassis_wz_angle_pid.pid_calc();
+        }
+
+        // 速度限幅
+        x.speed_set = fp32_constrain(x.speed_set, x.min_speed, x.max_speed);
+        y.speed_set = fp32_constrain(y.speed_set, y.min_speed, y.max_speed);
+        z.speed_set = fp32_constrain(z.speed_set, z.min_speed, z.max_speed);
+    }
 }
 
 /**

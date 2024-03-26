@@ -53,14 +53,14 @@ void Communicate::run()
     referee.unpack();
     referee.determine_ID();
 
-    ui.run();
+    // ui.run();
     // 向云台发送裁判数据
     uint16_t temp_id1_17mm_cooling_limit, temp_id1_17mm_cooling_rate, temp_id1_17mm_cooling_heat;
     uint16_t temp_id2_17mm_cooling_heat;
     uint8_t temp_color, temp_robot_id;
     uint16_t temp_id1_17mm_speed_limit;
     fp32 temp_bullet_speed;
-    uint8_t temp_chassis_behaviour_mode;
+    uint8_t temp_chassis_behaviour_mode; // 1 代表哨兵陀螺，0代表移动
     uint8_t temp_game_progress = referee.game_state.game_progress;
 
     referee.get_shooter_id1_17mm_cooling_limit_and_heat(&temp_id1_17mm_cooling_limit, &temp_id1_17mm_cooling_heat);

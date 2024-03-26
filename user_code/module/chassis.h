@@ -117,7 +117,7 @@
 // 底盘运动过程最大平移速度
 #define NORMAL_MAX_CHASSIS_SPEED_Y 4.0f // 1.5
 // 底盘运动过程最大旋转速度
-#define NORMAL_MAX_CHASSIS_SPEED_Z 14.0f
+#define NORMAL_MAX_CHASSIS_SPEED_Z 20.0f
 
 #define CHASSIS_WZ_SET_SCALE 0.1f
 
