@@ -4,15 +4,18 @@
 #include "main.h"
 #include "struct_typedef.h"
 
+extern "C"
+{
 #include "bsp_usart.h"
+}
 
 #define SLAM_BUFFER_LEN 200
 #define NOW 0
 #define LAST 1
 
-#define SLAM_LEN_HEADER 1      // 帧头长
-#define SLAM_LEN_DATA 9        // 数据段长度,可自定义
-#define SLAM_SEND_LEN_PACKED 0 // 暂时没有发送，备用
+#define SLAM_LEN_HEADER 1       // 帧头长
+#define SLAM_LEN_DATA 9         // 数据段长度,可自定义
+#define SLAM_SEND_LEN_PACKED 0  // 暂时没有发送，备用
 #define SLAM_READ_LEN_PACKED 11 // 接受数据包长度
 
 #define SLAM_BEGIN (0xA8) // 可更改
